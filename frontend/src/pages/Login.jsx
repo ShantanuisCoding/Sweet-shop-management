@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../auth/useAuth";
 
 export default function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +22,9 @@ export default function Login() {
       });
 
       login(response.data.access_token);
+
+      // ✅ redirect after successful login
+      navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
     }
