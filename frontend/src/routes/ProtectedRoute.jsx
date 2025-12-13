@@ -1,4 +1,12 @@
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
+
 export default function ProtectedRoute({ children }) {
-  // auth logic will be added later
+  const { token } = useAuth();
+
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 }
