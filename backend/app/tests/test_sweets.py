@@ -1,9 +1,4 @@
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-def register_and_login():
+def register_and_login(client):
     client.post("/api/auth/register", json={
         "email": "user@sweets.com",
         "password": "password"
@@ -15,8 +10,8 @@ def register_and_login():
     return response.json()["access_token"]
 
 
-def test_create_sweet():
-    token = register_and_login()
+def test_create_sweet(client):
+    token = register_and_login(client)
 
     response = client.post(
         "/api/sweets",
@@ -33,8 +28,8 @@ def test_create_sweet():
     assert response.json()["name"] == "Gulab Jamun"
 
 
-def test_get_all_sweets():
-    token = register_and_login()
+def test_get_all_sweets(client):
+    token = register_and_login(client)
 
     response = client.get(
         "/api/sweets",
