@@ -1,27 +1,59 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import api from "../api";
-import { AuthContext } from "../auth/AuthContext";
+import { useAuth } from "../auth/useAuth";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await api.post("/api/auth/login", {
-      email,
-      password,
-    });
-    login(res.data.access_token);
+    setError(null);
+
+    try {
+      const response = await api.post("/api/auth/login", {
+        email,
+        password,
+      });
+
+      login(response.data.access_token);
+    } catch (err) {
+      setError("Invalid email or password");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <h2>Login</h2>
-      <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-      <button>Login</button>
-    </form>
+
+      <form onSubmit={handleSubmit}>
+        <div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit">Login</button>
+      </form>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
   );
 }
