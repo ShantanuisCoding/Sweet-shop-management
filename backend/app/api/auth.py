@@ -8,8 +8,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", status_code=201)
 def register(payload: dict, db: Session = Depends(get_db)):
-    user = create_user(db, payload["email"], payload["password"])
-    return {"id": user.id, "email": user.email}
+    role = payload.get("role", "USER")
+    user = create_user(db, payload["email"], payload["password"], role)
+    return {"id": user.id, "email": user.email, "role": user.role}
 
 @router.post("/login")
 def login(payload: dict, db: Session = Depends(get_db)):
