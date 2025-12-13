@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import SweetCard from "../components/SweetCard";
 
 export default function Dashboard() {
   const [sweets, setSweets] = useState([]);
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const purchaseSweet = async (id) => {
     try {
       await api.post(`/api/sweets/${id}/purchase`);
-      loadSweets(); // refresh after purchase
+      loadSweets();
     } catch {
       setError("Purchase failed");
     }
@@ -33,15 +34,11 @@ export default function Dashboard() {
 
       <ul>
         {sweets.map((sweet) => (
-          <li key={sweet.id}>
-            <strong>{sweet.name}</strong> | {sweet.category} | ₹{sweet.price} | Stock: {sweet.quantity}{" "}
-            <button
-              onClick={() => purchaseSweet(sweet.id)}
-              disabled={sweet.quantity === 0}
-            >
-              Purchase
-            </button>
-          </li>
+          <SweetCard
+            key={sweet.id}
+            sweet={sweet}
+            onPurchase={purchaseSweet}
+          />
         ))}
       </ul>
     </div>
