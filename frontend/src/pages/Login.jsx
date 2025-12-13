@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import { useAuth } from "../auth/useAuth";
 
@@ -22,8 +22,6 @@ export default function Login() {
       });
 
       login(response.data.access_token);
-
-      // ✅ redirect after successful login
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
@@ -59,6 +57,11 @@ export default function Login() {
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* ✅ navigation only */}
+      <p>
+        Don&apos;t have an account? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 }
