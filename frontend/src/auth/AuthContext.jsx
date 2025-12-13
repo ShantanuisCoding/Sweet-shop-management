@@ -1,12 +1,18 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { setAuthToken } from "../api";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(
-    localStorage.getItem("token")
-  );
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      setAuthToken(storedToken);
+    }
+  }, []);
 
   const login = (jwt) => {
     localStorage.setItem("token", jwt);
