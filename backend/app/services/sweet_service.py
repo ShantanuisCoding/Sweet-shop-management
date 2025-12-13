@@ -26,3 +26,14 @@ def purchase_sweet(db: Session, sweet_id: int):
     db.commit()
     db.refresh(sweet)
     return sweet
+
+def restock_sweet(db: Session, sweet_id: int, amount: int):
+    sweet = db.query(Sweet).filter(Sweet.id == sweet_id).first()
+
+    if not sweet:
+        raise HTTPException(status_code=404, detail="Sweet not found")
+
+    sweet.quantity += amount
+    db.commit()
+    db.refresh(sweet)
+    return sweet
