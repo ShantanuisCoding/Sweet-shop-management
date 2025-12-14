@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from app.db.base import Base
 from app.main import app
+from app.api.deps import get_db
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_test.db"
 
@@ -21,25 +22,17 @@ TestingSessionLocal = sessionmaker(
 
 
 @pytest.fixture(scope="function")
-def db_session():
-    # Recreate tables for each test (clean state)
+def client():
+    # Recreate tables for a clean state
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-@pytest.fixture(scope="function")
-def client(db_session):
-    # ⬇ IMPORT HERE to avoid circular imports
-    from app.api.deps import get_db
-
     def override_get_db():
-        yield db_session
+        db = TestingSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
 
     app.dependency_overrides[get_db] = override_get_db
 

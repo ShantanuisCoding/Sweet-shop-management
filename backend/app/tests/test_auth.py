@@ -1,9 +1,4 @@
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-def test_user_registration():
+def test_user_registration(client):
     response = client.post(
         "/api/auth/register",
         json={
@@ -17,7 +12,7 @@ def test_user_registration():
     assert response.json()["email"] == "test@example.com"
 
 
-def test_user_login():
+def test_user_login(client):
     # register first
     client.post(
         "/api/auth/register",

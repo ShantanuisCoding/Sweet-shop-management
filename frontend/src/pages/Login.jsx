@@ -29,6 +29,7 @@ export default function Login() {
   };
 
   return (
+
     <div>
       <h2>Login</h2>
 
@@ -63,5 +64,6 @@ export default function Login() {
         Don&apos;t have an account? <Link to="/register">Register</Link>
       </p>
     </div>
+
   );
 }

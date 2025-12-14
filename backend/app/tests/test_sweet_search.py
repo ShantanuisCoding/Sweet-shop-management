@@ -1,10 +1,4 @@
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-
-def auth_header():
+def auth_header(client):
     client.post("/api/auth/register", json={
         "email": "search@test.com",
         "password": "password"
@@ -16,7 +10,7 @@ def auth_header():
     return {"Authorization": f"Bearer {token}"}
 
 
-def seed_sweets(headers):
+def seed_sweets(client, headers):
     sweets = [
         {"name": "Ladoo", "category": "Indian", "price": 5, "quantity": 10},
         {"name": "Barfi", "category": "Indian", "price": 15, "quantity": 5},
@@ -27,9 +21,9 @@ def seed_sweets(headers):
         client.post("/api/sweets", headers=headers, json=sweet)
 
 
-def test_search_by_category():
-    headers = auth_header()
-    seed_sweets(headers)
+def test_search_by_category(client):
+    headers = auth_header(client)
+    seed_sweets(client, headers)
 
     response = client.get(
         "/api/sweets/search?category=Indian",
@@ -40,9 +34,9 @@ def test_search_by_category():
     assert len(response.json()) == 2
 
 
-def test_search_by_price_range():
-    headers = auth_header()
-    seed_sweets(headers)
+def test_search_by_price_range(client):
+    headers = auth_header(client)
+    seed_sweets(client, headers)
 
     response = client.get(
         "/api/sweets/search?min_price=10&max_price=20",

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
+
 export default function Register() {
   const navigate = useNavigate();
 
@@ -27,6 +28,7 @@ export default function Register() {
   };
 
   return (
+
     <div>
       <h2>Register</h2>
 
@@ -56,5 +58,6 @@ export default function Register() {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
+
   );
 }

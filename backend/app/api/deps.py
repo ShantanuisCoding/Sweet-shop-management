@@ -1,15 +1,16 @@
-from app.db.session import SessionLocal
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
-from app.core.config import SECRET_KEY, ALGORITHM
 from sqlalchemy.orm import Session
+
+from app.db.session import SessionLocal
 from app.db.models import User
-from app.api.deps import get_db
+from app.core.config import SECRET_KEY, ALGORITHM
 
+# 🔐 Simple Bearer token security (Swagger-friendly)
+security = HTTPBearer()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-
+# DB dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -17,21 +18,39 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+
+# Current user (JWT)
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    token = credentials.credentials
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload["sub"]
+        email: str | None = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token"
+            detail="Invalid or expired token"
         )
-    
-def get_current_admin(
-    current_user_email: str = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    user = db.query(User).filter(User.email == current_user_email).first()
-    if not user or user.role != "ADMIN":
-        raise HTTPException(status_code=403, detail="Admin access required")
+
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
     return user
+
+
+# Admin-only dependency
+def get_current_admin(
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "ADMIN":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user

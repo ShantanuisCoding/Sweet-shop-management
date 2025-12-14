@@ -14,6 +14,7 @@ from app.services.sweet_service import (
     search_sweets
 )
 from typing import Optional
+from app.schemas.sweet import RestockRequest
 
 router = APIRouter(
     prefix="/api/sweets",
@@ -46,12 +47,11 @@ def purchase(
 @router.post("/{sweet_id}/restock")
 def restock(
     sweet_id: int,
-    payload: dict,
+    payload: RestockRequest,
     db: Session = Depends(get_db),
     admin: User =Depends(get_current_admin)  # 🔒 ONLY ADMIN
 ):
-    return restock_sweet(db, sweet_id, payload["amount"])
-
+    return restock_sweet(db, sweet_id, payload.amount)
 @router.get("/search")
 def search(
     name: Optional[str] = None,

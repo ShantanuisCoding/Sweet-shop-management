@@ -1,11 +1,11 @@
-def auth_header(client):
+def auth_header(client, email="inventory@test.com"):
     client.post("/api/auth/register", json={
-        "email": "inventory@test.com",
+        "email": email,
         "password": "password"
     })
 
     token = client.post("/api/auth/login", json={
-        "email": "inventory@test.com",
+        "email": email,
         "password": "password"
     }).json()["access_token"]
 
@@ -27,7 +27,7 @@ def create_sweet(client, headers, quantity: int):
 
 
 def test_purchase_sweet_decreases_quantity(client):
-    headers = auth_header(client)
+    headers = auth_header(client, "inventory1@test.com")
 
     sweet_id = create_sweet(client, headers, 2)
 
@@ -41,7 +41,7 @@ def test_purchase_sweet_decreases_quantity(client):
 
 
 def test_purchase_fails_when_out_of_stock(client):
-    headers = auth_header(client)
+    headers = auth_header(client, "inventory2@test.com")
 
     sweet_id = create_sweet(client, headers, 0)
 

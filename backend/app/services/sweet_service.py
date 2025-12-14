@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session, and_
+from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from app.db.models import Sweet
 from fastapi import HTTPException
 
