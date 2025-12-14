@@ -5,7 +5,7 @@ from app.api.auth import router as auth_router
 from app.api.sweets import router as sweets_router
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app = FastAPI(title="Sweets API", version="1.0.0")
 
 Base.metadata.create_all(bind=engine)
 
