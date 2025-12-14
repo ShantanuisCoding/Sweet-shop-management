@@ -8,6 +8,20 @@ This project was developed as part of an **AI-assisted TDD kata**, with a strong
 
 ---
 
+## 🌍 Live Backend Deployment
+
+The backend API is deployed on Render:
+
+**Base URL:**  
+https://sweet-shop-management-kxx6.onrender.com
+
+**Health Check:**  
+https://sweet-shop-management-kxx6.onrender.com/health
+
+**Swagger API Docs:**  
+https://sweet-shop-management-kxx6.onrender.com/docs
+
+
 ## 🎯 Objectives
 
 The backend is designed to demonstrate:
